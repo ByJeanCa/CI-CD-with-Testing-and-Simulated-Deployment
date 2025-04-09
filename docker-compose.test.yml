@@ -12,7 +12,7 @@ services:
     networks:
       - jenkins-net
     command: ["./wait-for-db.sh", "python", "test_api.py"]
-  db:
+  db-test:
     image: postgres:latest
     ports:
       - "5432:5432"
