@@ -7,3 +7,13 @@ services:
       - "5000:5000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
+    command: ["./wait-for-db.sh", "python", "test_api.py"]
+    networks:
+      - jenkins-net
+
+networks:
+  jenkins-net:
+    external: true
+
+  
+  
