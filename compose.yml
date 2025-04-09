@@ -1,0 +1,38 @@
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    networks:
+      - jenkins-net
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - task-memory:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      
+    networks:
+      - jenkins-net
+  
+volumes:
+  task-memory:
+
+# IMPORTANT: This custom network 'jenkins-net' was used during local development because Jenkins was running in a separate container.
+# because Jenkins was running in a separate container.
+# In order for Jenkins to communicate with the services defined in this compose,
+# it was necessary to connect it to this same network. If you are going to run this in another environment,
+# you can change the name or the network according to your configuration.
+networks:
+  jenkins-net:
+    external: true
