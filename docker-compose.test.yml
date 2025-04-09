@@ -11,7 +11,7 @@ services:
       - db
     networks:
       - jenkins-net
-    command: ["pytest"]
+    command: ["./wait-for-db.sh", "python", "test_api.py"]
   db:
     image: postgres:latest
     ports:
