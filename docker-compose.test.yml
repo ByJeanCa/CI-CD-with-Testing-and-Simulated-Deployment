@@ -11,7 +11,7 @@ services:
       - db
     networks:
       - jenkins-net
-    command: ["pytest", "-v"]
+    command: ["test_api"]
   db:
     image: postgres:latest
     ports:
