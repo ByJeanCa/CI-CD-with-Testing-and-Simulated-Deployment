@@ -11,7 +11,7 @@ services:
       - db
     networks:
       - jenkins-net
-    command: ["test_api"]
+    command: ["python", "test_api.py"]
   db:
     image: postgres:latest
     ports:
