@@ -4,15 +4,15 @@ set -e
 ENV=${ENV:-prod}
 
 if [ "$ENV" = "test" ]; then
-  echo "Entorno: TEST. Esperando a db-test:5433..."
-  until pg_isready -h db-test -p 5433 > /dev/null 2>&1; do
-    echo "Esperando a db-test..."
+  echo "Entorno: TEST. Esperando a db-test:5432..."
+  until nc -z db-test 5432; do
+    echo "Esperando a db-test en el puerto 5432..."
     sleep 2
   done
 else
   echo "Entorno: PROD. Esperando a db:5432..."
-  until pg_isready -h db -p 5432 > /dev/null 2>&1; do
-    echo "Esperando a db..."
+  until nc -z db 5432; do
+    echo "Esperando a db en el puerto 5432..."
     sleep 2
   done
 fi
