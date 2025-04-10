@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("Clone") {
+            steps {
+                deleteDir()
+                git url: 'https://github.com/ByJeanCa/CI-CD-with-Testing-and-Simulated-Deployment.git', credentialsId: 'git-token', branch: 'main'
+                withCredentials([file(credentialsId: 'db-test', variable: 'SECRET_FILE')]) {
+                    sh 'whoami && ls -la'
+                    sh 'cp "$SECRET_FILE" "$WORKSPACE/.env"'
+                }
+
+            }
+        }
+        stage("Test") {
+            steps {
+                sh 'docker compose -f docker-compose.test.yml down'
+                sh 'docker compose -f docker-compose.test.yml build --no-cache'
+                sh 'docker compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from api'
+                sh 'docker compose -f docker-compose.test.yml down'
+                sh 'rm -rf .env'
+            }
+        }
+        stage("Build") {
+            steps {
+                withCredentials([file(credentialsId: 'env-proyec1', variable: 'SECRET_FILE')]) {
+                    sh 'cp "$SECRET_FILE" "$WORKSPACE/.env"'
+                }
+                sh 'docker compose -f docker-compose-prod.yml build'
+            }
+        }
+        stage("Deploy") {
+            steps {
+                sh 'docker compose -f docker-compose-prod.yml up -d --build'
+                sh """
+                if docker logs "api-oficial" | grep -i 'error'; then
+                    echo "❌ Se encontraron errores en los logs de 'api-oficial'"
+                    exit 1
+                fi
+                """
+            }
+        }
+        stage("Notify") {
+            steps {
+                echo  "✅ Servicios desplegados correctamente"
+            }
+        }
+    }
+}
