@@ -7,15 +7,16 @@ services:
       - "5000:5000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
+      - ENV=test
     depends_on:
-      - db
+      - db-test
     networks:
       - jenkins-net
     command: ["./wait-for-db.sh", "python", "test_api.py"]
   db-test:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}

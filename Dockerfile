@@ -5,6 +5,7 @@ WORKDIR /api2
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     netcat-openbsd \
+    postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
